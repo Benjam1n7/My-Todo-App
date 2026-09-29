@@ -7,7 +7,6 @@ interface TodoFiltersProps {
   activeCount: number;
   completedCount: number;
   totalCount: number;
-  onClearCompleted: () => void;
 }
 
 export const TodoFilters: React.FC<TodoFiltersProps> = ({
@@ -16,7 +15,6 @@ export const TodoFilters: React.FC<TodoFiltersProps> = ({
   activeCount,
   completedCount,
   totalCount,
-  onClearCompleted,
 }) => {
   const filters: { key: FilterType; label: string; count: number }[] = [
     { key: 'all', label: 'All', count: totalCount },
@@ -25,47 +23,38 @@ export const TodoFilters: React.FC<TodoFiltersProps> = ({
   ];
 
   return (
-    <div className="mt-4 flex flex-col gap-3 pt-3 border-t border-zinc-100 sm:flex-row sm:items-center sm:justify-between text-xs text-zinc-500">
-      <div className="font-medium text-zinc-600">
-        <span>
-          {activeCount} {activeCount === 1 ? 'task' : 'tasks'} remaining
-        </span>
-      </div>
-
-      <div className="flex items-center gap-1 rounded-lg bg-zinc-100/80 p-1 self-start sm:self-auto">
-        {filters.map(({ key, label, count }) => {
-          const isActive = currentFilter === key;
-          return (
-            <button
-              key={key}
-              onClick={() => onFilterChange(key)}
-              className={`rounded-md px-2.5 py-1 font-medium transition-all ${
+    <nav
+      className="flex items-center gap-1 border-b border-zinc-200/70 dark:border-zinc-800/80 pb-2 mb-4"
+      aria-label="Filter tasks"
+      role="tablist"
+    >
+      {filters.map(({ key, label, count }) => {
+        const isActive = currentFilter === key;
+        return (
+          <button
+            key={key}
+            role="tab"
+            aria-selected={isActive}
+            onClick={() => onFilterChange(key)}
+            className={`relative flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium transition-colors rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-zinc-900/20 dark:focus-visible:ring-zinc-100/20 ${
+              isActive
+                ? 'text-zinc-950 dark:text-zinc-100 font-semibold bg-zinc-100/90 dark:bg-zinc-800'
+                : 'text-zinc-500 dark:text-zinc-400 hover:text-zinc-800 dark:hover:text-zinc-200 hover:bg-zinc-50 dark:hover:bg-zinc-800/50'
+            }`}
+          >
+            <span>{label}</span>
+            <span
+              className={`rounded-full px-1.5 py-0.2 text-[10px] tabular-nums transition-colors ${
                 isActive
-                  ? 'bg-white text-zinc-900 shadow-xs'
-                  : 'text-zinc-600 hover:text-zinc-900'
+                  ? 'bg-zinc-200 dark:bg-zinc-700 text-zinc-900 dark:text-zinc-200 font-medium'
+                  : 'bg-zinc-100 dark:bg-zinc-800/80 text-zinc-400 dark:text-zinc-500'
               }`}
             >
-              {label}{' '}
-              <span className={`ml-0.5 text-[10px] ${isActive ? 'text-zinc-500' : 'text-zinc-400'}`}>
-                ({count})
-              </span>
-            </button>
-          );
-        })}
-      </div>
-
-      <div className="flex items-center justify-end min-h-[24px]">
-        {completedCount > 0 ? (
-          <button
-            onClick={onClearCompleted}
-            className="text-zinc-400 hover:text-red-600 transition-colors underline-offset-4 hover:underline"
-          >
-            Clear completed
+              {count}
+            </span>
           </button>
-        ) : (
-          <span className="invisible select-none">Clear</span>
-        )}
-      </div>
-    </div>
+        );
+      })}
+    </nav>
   );
 };
